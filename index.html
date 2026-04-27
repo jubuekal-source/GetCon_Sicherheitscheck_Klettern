@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sicherheitscheck Topropeklettern – GetCon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F7FAFC;
+  --bg-card: #FFFFFF;
+  --bg-subtle: #EDF2F7;
+  --bg-hover: #F7FAFC;
+  --border: #E2E8F0;
+  --border-light: #EDF2F7;
+  --text: #2D3748;
+  --text-secondary: #4A5568;
+  --text-muted: #718096;
+  --text-faint: #A0AEC0;
+  --blue: #2B6CB0;
+  --blue-dark: #1E4D7B;
+  --blue-light: #D5E8F0;
+  --blue-bg: #EBF4FA;
+  --green: #2F855A;
+  --green-light: #C6F6D5;
+  --green-bg: #F0FFF4;
+  --orange: #C05621;
+  --orange-light: #FEEBC8;
+  --orange-bg: #FFFAF0;
+  --red: #C53030;
+  --red-bg: #FFF5F5;
+  --header-bg: #1A202C;
+  --shadow: 0 1px 3px rgba(0,0,0,.08), 0 4px 12px rgba(0,0,0,.04);
+  --shadow-lg: 0 4px 20px rgba(0,0,0,.1);
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+[data-theme="dark"] {
+  --bg: #111827;
+  --bg-card: #1F2937;
+  --bg-subtle: #374151;
+  --bg-hover: #283041;
+  --border: #374151;
+  --border-light: #2D3748;
+  --text: #E2E8F0;
+  --text-secondary: #CBD5E0;
+  --text-muted: #9CA3AF;
+  --text-faint: #6B7280;
+  --blue-bg: #1E3A5F;
+  --green-bg: #1C3829;
+  --green-light: #276749;
+  --orange-bg: #3D2814;
+  --red-bg: #3B1515;
+  --header-bg: #0D1117;
+  --shadow: 0 1px 3px rgba(0,0,0,.3), 0 4px 12px rgba(0,0,0,.2);
+  --shadow-lg: 0 4px 20px rgba(0,0,0,.4);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'DM Sans', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: 80px;
+  transition: background .25s, color .25s;
+}
+
+/* ── Header ── */
+.site-header {
+  background: var(--header-bg);
+  color: white;
+  padding: 16px 20px 24px;
+  position: relative;
+}
+.site-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--blue), var(--green));
+}
+.header-top {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 18px;
+}
+.header-logo-link { display: block; height: 36px; }
+.header-logo-link img { height: 36px; width: auto; }
+[data-theme="dark"] .header-logo-link img { filter: brightness(1.8) contrast(0.9); }
+.theme-toggle {
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.15);
+  color: white; width: 38px; height: 38px;
+  border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 18px; transition: background .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.theme-toggle:hover { background: rgba(255,255,255,.18); }
+.header-title { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.2; margin-bottom: 6px; }
+.header-sub { font-size: 15px; color: #9CA3AF; font-weight: 400; }
+
+/* ── Progress Bar ── */
+.progress-bar {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--bg-card); border-bottom: 1px solid var(--border);
+  padding: 12px 20px; display: flex; gap: 6px; align-items: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,.04); transition: background .25s;
+}
+.progress-dot {
+  width: 28px; height: 5px; border-radius: 3px;
+  background: var(--border); transition: background .3s, transform .3s; cursor: pointer;
+}
+.progress-dot.active { background: var(--blue); transform: scaleY(1.4); }
+.progress-dot.done { background: var(--green); }
+.progress-label { margin-left: auto; font-size: 12px; color: var(--text-muted); font-weight: 500; white-space: nowrap; }
+
+.content { max-width: 640px; margin: 0 auto; padding: 0 16px; }
+.section-label {
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 1px; color: var(--text-faint); padding: 28px 20px 4px;
+}
+
+/* ── Steps ── */
+.step {
+  margin-top: 20px; background: var(--bg-card); border-radius: var(--radius);
+  box-shadow: var(--shadow); overflow: hidden; border: 1px solid var(--border);
+  transition: background .25s, border-color .25s;
+}
+.step-header {
+  display: flex; align-items: center; gap: 14px; padding: 16px 20px;
+  cursor: pointer; user-select: none; transition: background .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.step-header:hover { background: var(--bg-hover); }
+.step-number {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 15px; font-family: 'JetBrains Mono', monospace;
+  flex-shrink: 0;
+}
+.step-number.prep { background: var(--blue-bg); color: var(--blue); }
+.step-number.knot { background: var(--orange-bg); color: var(--orange); }
+.step-number.check { background: var(--green-bg); color: var(--green); }
+.step-number.secure { background: var(--blue-bg); color: var(--blue-dark); }
+[data-theme="dark"] .step-number.secure { color: #7EB8E0; }
+.step-number.climb { background: var(--red-bg); color: var(--red); }
+[data-theme="dark"] .step-number.climb { color: #F87171; }
+.step-number.special { background: var(--bg-subtle); color: var(--text-muted); }
+.step-header-text { flex: 1; min-width: 0; }
+.step-title { font-size: 17px; font-weight: 700; color: var(--text); line-height: 1.3; }
+.step-subtitle { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+.step-chevron { width: 20px; height: 20px; color: var(--text-faint); transition: transform .25s ease; flex-shrink: 0; }
+.step.open > .step-header .step-chevron { transform: rotate(180deg); }
+.step-body { max-height: 0; overflow: hidden; transition: max-height .35s ease; }
+.step.open > .step-body { max-height: 8000px; }
+.step-content { padding: 0 20px 20px; }
+
+/* ── Sub-Accordion ── */
+.sub-section { border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 10px; overflow: hidden; }
+.sub-header {
+  display: flex; align-items: center; gap: 10px; padding: 12px 14px;
+  cursor: pointer; user-select: none; background: var(--bg-subtle); transition: background .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.sub-header:hover { background: var(--bg-hover); }
+.sub-icon { font-size: 16px; flex-shrink: 0; width: 24px; text-align: center; }
+.sub-title { font-size: 14px; font-weight: 600; color: var(--text); flex: 1; }
+.sub-chevron { width: 16px; height: 16px; color: var(--text-faint); transition: transform .2s; flex-shrink: 0; }
+.sub-section.open .sub-chevron { transform: rotate(180deg); }
+.sub-body { max-height: 0; overflow: hidden; transition: max-height .3s ease; }
+.sub-section.open .sub-body { max-height: 5000px; }
+.sub-content { padding: 14px; }
+
+/* ── Close Button ── */
+.close-section-btn {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  width: 100%; padding: 10px; margin-top: 12px;
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--bg-subtle); font-size: 13px; font-weight: 600;
+  color: var(--text-muted); cursor: pointer; font-family: inherit;
+  transition: all .15s; -webkit-tap-highlight-color: transparent;
+}
+.close-section-btn:hover { background: var(--bg-hover); color: var(--text); }
+
+/* ── Info Cards ── */
+.info-card {
+  background: var(--bg-subtle); border-radius: var(--radius-sm); padding: 14px;
+  margin-bottom: 14px; border-left: 3px solid var(--blue); transition: background .25s;
+}
+.info-card.warning { background: var(--orange-bg); border-left-color: var(--orange); }
+.info-card.danger { background: var(--red-bg); border-left-color: var(--red); }
+.info-card.success { background: var(--green-bg); border-left-color: var(--green); }
+.info-card-title { font-weight: 700; font-size: 14px; margin-bottom: 5px; }
+.info-card p { font-size: 14px; line-height: 1.55; color: var(--text-secondary); }
+
+/* ── Lists ── */
+.bullet-list { list-style: none; padding: 0; margin: 6px 0 12px; }
+.bullet-list li {
+  padding: 5px 0 5px 20px; position: relative;
+  font-size: 14px; line-height: 1.55; color: var(--text-secondary);
+}
+.bullet-list li::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--text-faint); position: absolute; left: 0; top: 12px;
+}
+.bold { font-weight: 600; color: var(--text); }
+
+/* ── Checklist ── */
+.checklist-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 0; border-bottom: 1px solid var(--border-light);
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.checklist-item:last-child { border-bottom: none; }
+.check-box {
+  width: 26px; height: 26px; border-radius: 7px;
+  border: 2px solid var(--text-faint); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s; margin-top: 1px;
+}
+.checklist-item.checked .check-box { background: var(--green); border-color: var(--green); }
+.check-icon { opacity: 0; transform: scale(0.5); transition: all .2s; color: white; font-size: 14px; font-weight: 700; }
+.checklist-item.checked .check-icon { opacity: 1; transform: scale(1); }
+.check-label { font-size: 15px; line-height: 1.5; color: var(--text); transition: color .2s; }
+.checklist-item.checked .check-label { color: var(--text-faint); text-decoration: line-through; }
+.partnercheck-status {
+  text-align: center; padding: 14px; border-radius: var(--radius-sm);
+  margin-top: 14px; font-weight: 700; font-size: 15px; transition: all .3s;
+}
+.partnercheck-status.incomplete { background: var(--orange-bg); color: var(--orange); }
+.partnercheck-status.complete { background: var(--green-bg); color: var(--green); }
+.reset-btn {
+  display: block; width: 100%; padding: 11px; margin-top: 10px;
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--bg-card); font-size: 14px; font-weight: 600;
+  color: var(--text-muted); cursor: pointer; font-family: inherit; transition: all .15s;
+}
+.reset-btn:hover { background: var(--bg-subtle); color: var(--text); }
+
+/* ── Image Placeholders ── */
+.img-slot {
+  background: var(--bg-subtle); border: 2px dashed var(--border);
+  border-radius: var(--radius-sm); padding: 22px 16px;
+  text-align: center; margin: 14px 0;
+  color: var(--text-faint); font-size: 13px; font-style: italic;
+}
+.img-slot img { max-width: 100%; border-radius: var(--radius-sm); display: block; margin: 0 auto; }
+
+/* ── Video Links ── */
+.video-link {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--header-bg); color: white;
+  padding: 12px 14px; border-radius: var(--radius-sm);
+  text-decoration: none; margin: 12px 0;
+  transition: transform .15s, box-shadow .15s;
+}
+.video-link:hover { transform: translateY(-1px); box-shadow: var(--shadow-lg); }
+.video-play {
+  width: 34px; height: 34px; background: #E53E3E; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.video-text { font-size: 13px; font-weight: 500; line-height: 1.3; }
+.video-text span { display: block; color: #9CA3AF; font-size: 11px; font-weight: 400; margin-top: 2px; }
+
+/* ── Command Table ── */
+.cmd-table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+.cmd-table td {
+  padding: 10px 14px; border: 1px solid var(--border);
+  font-size: 14px; vertical-align: top;
+}
+.cmd-table td:first-child {
+  font-weight: 700; font-family: 'JetBrains Mono', monospace; font-size: 15px;
+  width: 80px; background: var(--blue-bg); color: var(--blue); text-align: center;
+}
+
+/* ── Footer ── */
+.site-footer {
+  margin-top: 40px; padding: 24px 20px 32px;
+  text-align: center; border-top: 1px solid var(--border);
+}
+.footer-logo { margin-bottom: 20px; }
+.footer-stack {
+  display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 20px;
+}
+.footer-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 11px 24px; border-radius: var(--radius-sm);
+  text-decoration: none; font-size: 14px; font-weight: 600;
+  transition: transform .15s, box-shadow .15s;
+  min-width: 220px;
+}
+.footer-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-lg); }
+.footer-btn.web { background: var(--bg-subtle); color: var(--text); border: 1px solid var(--border); }
+.footer-btn.whatsapp { background: #25D366; color: white; }
+.footer-btn.email { background: var(--blue); color: white; }
+.footer-btn .btn-sub { font-size: 11px; font-weight: 400; opacity: .85; display: block; margin-top: 1px; }
+.footer-meta { font-size: 12px; color: var(--text-faint); line-height: 1.6; margin-top: 8px; }
+.footer-meta a { color: var(--text-muted); text-decoration: none; }
+/* ── Image dark/light swap ── */
+.img-slot .img-light { display: block; }
+.img-slot .img-dark { display: none; }
+[data-theme="dark"] .img-slot .img-light { display: none; }
+[data-theme="dark"] .img-slot .img-dark { display: block; }
+/* Fallback: single image with filter in dark mode */
+[data-theme="dark"] .img-slot img.img-auto { filter: invert(.85) hue-rotate(180deg) brightness(1.1); }
+
+@keyframes checkPop { 0%{transform:scale(.8)} 50%{transform:scale(1.15)} 100%{transform:scale(1)} }
+.checklist-item.just-checked .check-box { animation: checkPop .3s ease; }
+
+@media print {
+  .progress-bar,.reset-btn,.footer-stack,.theme-toggle,.close-section-btn{display:none}
+  .step-body,.sub-body{max-height:none!important}
+  body{padding-bottom:0;background:white;color:#222}
+  .step,.sub-section{box-shadow:none;border:1px solid #ccc}
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-top">
+    <a href="https://www.getcon-ep.de" class="header-logo-link" target="_blank" rel="noopener" style="text-decoration:none;display:flex;align-items:center;height:auto;">
+      <span style="font-weight:700;font-size:22px;color:white;letter-spacing:-0.5px;">Get<span style="color:#7EB8E0;">Con</span></span>
+    </a>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Dark Mode" id="themeBtn">🌙</button>
+  </div>
+  <h1 class="header-title">Sicherheitscheck<br>Topropeklettern</h1>
+  <p class="header-sub">Schritt für Schritt – vom Anlegen bis zum Ablassen</p>
+</header>
+
+<nav class="progress-bar">
+  <div class="progress-dot" data-step="0" title="Vorbereitung"></div>
+  <div class="progress-dot" data-step="1" title="Knoten"></div>
+  <div class="progress-dot" data-step="2" title="Partnercheck"></div>
+  <div class="progress-dot" data-step="3" title="Sichern"></div>
+  <div class="progress-dot" data-step="4" title="Klettern"></div>
+  <div class="progress-dot" data-step="5" title="Komplettgurt"></div>
+  <span class="progress-label" id="progressLabel">– / 6</span>
+</nav>
+
+<main class="content">
+
+<div class="section-label">Einmalig vor dem Klettern</div>
+
+<!-- ── 01 VORBEREITUNG ── -->
+<section class="step" data-index="0">
+  <div class="step-header" onclick="toggleStep(this)">
+    <div class="step-number prep">01</div>
+    <div class="step-header-text">
+      <div class="step-title">Vorbereitung</div>
+      <div class="step-subtitle">Verfassung, Outfit, Gurte, Hinweise</div>
+    </div>
+    <svg class="step-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="step-body"><div class="step-content">
+
+    <div class="info-card">
+      <div class="info-card-title">🩹 Erste-Hilfe-Pack und Handy griffbereit haben</div>
+      <p>Beides muss jederzeit schnell erreichbar sein – nicht im Auto.</p>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-header" onclick="toggleSub(this)">
+        <span class="sub-icon">🫀</span>
+        <span class="sub-title">Körperliche Verfassung abfragen</span>
+        <svg class="sub-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="sub-body"><div class="sub-content">
+        <ul class="bullet-list">
+          <li>Kein Klettern unter Einfluss von Drogen, Alkohol oder Medikamenten, die das Reaktionsvermögen beeinträchtigen können</li>
+          <li>Gesundheitliche Einschränkungen wie Epilepsie, Rücken- oder Bewegungsapparatverletzungen müssen ausgeschlossen sein</li>
+          <li>Bei einer Schwangerschaft sollte Klettern vorab mit dem Arzt abgeklärt sein</li>
+        </ul>
+      </div></div>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-header" onclick="toggleSub(this)">
+        <span class="sub-icon">👕</span>
+        <span class="sub-title">Outfit & Schmuck</span>
+        <svg class="sub-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="sub-body"><div class="sub-content">
+        <ul class="bullet-list">
+          <li>Weite Pullis mit Bändel, weite T-Shirts, Schals und alles, was beim Sichern oder Ablassen in das Sicherungsgerät eingezogen werden kann, vermeiden</li>
+          <li>Lange Haare nach hinten zusammenbinden</li>
+          <li>Halsschmuck, Ringe, Uhren, große Ohrringe, Piercings etc. ablegen oder abkleben</li>
+          <li>Hosentaschen leeren</li>
+          <li>Brillen wenn möglich ablegen oder mit Brillenband sichern</li>
+        </ul>
+      </div></div>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-header" onclick="toggleSub(this)">
+        <span class="sub-icon">🪢</span>
+        <span class="sub-title">Anlegen der Gurte</span>
+        <svg class="sub-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="sub-body"><div class="sub-content">
+        <ul class="bullet-list">
+          <li><span class="bold">(a) Hüftgurt</span> zuerst über den Beckenkamm legen und so fest anziehen, dass er nicht mehr darüber rutschen kann</li>
+          <li><span class="bold">(b) Beinschlaufen</span> danach anziehen – eine flache Hand muss noch bequem zwischen Bein und Gurt passen</li>
+          <li><span class="bold">Kinder unter 6 Jahren:</span> Vollkombigurt/Komplettgurt oder Hüftgurt + Brustgurt erforderlich (siehe Abschnitt 06)</li>
+        </ul>
+      </div></div>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-header" onclick="toggleSub(this)">
+        <span class="sub-icon">⚠️</span>
+        <span class="sub-title">Sicherheitshinweise erteilen</span>
+        <svg class="sub-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="sub-body"><div class="sub-content">
+        <div class="info-card warning">
+          <p>
+            ✋ <strong>Challenge By Choice</strong> – niemand muss klettern.<br>
+            ⚠️ Achtsamer Umgang mit dem Klettermaterial (nicht auf Seil treten).<br>
+            🔥 Klettermaterial von offenem Feuer fernhalten. Rauchen verboten!<br>
+            🚻 Wer auf die Toilette muss, lässt den Gurt hier!
+          </p>
+        </div>
+      </div></div>
+    </div>
+
+    <button class="close-section-btn" onclick="closeStep(this)">▲ Vorbereitung schließen</button>
+  </div></div>
+</section>
+
+<!-- ── 02 KNOTEN & EINBINDEN ── -->
+<section class="step" data-index="1">
+  <div class="step-header" onclick="toggleStep(this)">
+    <div class="step-number knot">02</div>
+    <div class="step-header-text">
+      <div class="step-title">Knoten & Einbinden</div>
+      <div class="step-subtitle">Normalbetrieb oder Gruppenbetrieb</div>
+    </div>
+    <svg class="step-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="step-body"><div class="step-content">
+
+    <div class="sub-section">
+      <div class="sub-header" onclick="toggleSub(this)">
+        <span class="sub-icon">🧶</span>
+        <span class="sub-title">Normalbetrieb – Achterknoten</span>
+        <svg class="sub-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="sub-body"><div class="sub-content">
+        <ul class="bullet-list">
+          <li>Achterknoten zum Einbinden in den Gurt</li>
+          <li>Seilende nach dem Knoten: mindestens <span class="bold">10 cm</span> (etwas mehr als eine Handbreite)</li>
+          <li>Kleines Knotenauge – Faustregel: Eine Faust darf nicht mehr durchpassen</li>
+          <li>Knoten am Seilende der sichernden Person (Seil muss lang genug sein!)</li>
+        </ul>
+        <a class="video-link" href="https://www.youtube.com/watch?v=sBKr65xKcxU&t=1s" target="_blank" rel="noopener">
+          <div class="video-play"><svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg></div>
+          <div class="video-text">Lehrvideo: Achterknoten gesteckt<span>YouTube öffnen</span></div>
+        </a>
+      </div></div>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-header" onclick="toggleSub(this)">
+        <span class="sub-icon">🔄</span>
+        <span class="sub-title">Gruppenbetrieb – Karabiner-Einbindung</span>
+        <svg class="sub-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="sub-body"><div class="sub-content">
+        <p style="font-size:13px; color:var(--text-muted); margin-bottom:12px; font-style:italic;">z. B. bei einem Fest – schnell wechselnder Betrieb</p>
+        <div class="info-card warning">
+          <div class="info-card-title">⚠️ Nur beim Toprope-Klettern erlaubt</div>
+          <p>Ausnahmsweise darf hier das Seil mit zwei Schraub-Karabinern am Gurt befestigt werden (Redundanz).</p>
+        </div>
+        <ul class="bullet-list">
+          <li>Schraubverschlüsse <span class="bold">gegenläufig</span> einhängen, Gewinde nach unten schließen</li>
+          <li>Einzige Alternative: <span class="bold">Ball-Lock-Karabiner</span> – hier genügt einer</li>
+          <li><span class="bold">Querbelastung</span> von Karabinern unbedingt vermeiden!</li>
+          <li>Achterknoten wird in diesem Fall <span class="bold">gelegt</span>, nicht gesteckt</li>
+        </ul>
+        <a class="video-link" href="https://www.youtube.com/watch?v=XJQvmsby6_A" target="_blank" rel="noopener">
+          <div class="video-play"><svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg></div>
+          <div class="video-text">Lehrvideo: Achterknoten gelegt<span>YouTube öffnen (ab Min. 1:25)</span></div>
+        </a>
+      </div></div>
+    </div>
+
+    <button class="close-section-btn" onclick="closeStep(this)">▲ Knoten & Einbinden schließen</button>
+  </div></div>
+</section>
+
+<div class="section-label">Vor jedem Klettern</div>
+
+<!-- ── 03 PARTNERCHECK ── -->
+<section class="step" data-index="2">
+  <div class="step-header" onclick="toggleStep(this)">
+    <div class="step-number check">03</div>
+    <div class="step-header-text">
+      <div class="step-title">4-Punkte-Partnercheck</div>
+      <div class="step-subtitle">Vor jedem Klettern gemeinsam prüfen</div>
+    </div>
+    <svg class="step-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="step-body"><div class="step-content">
+
+    <div class="info-card success">
+      <p><strong>Gegenseitig prüfen!</strong> Kletternde und sichernde Person checken sich vor jedem Einstieg.</p>
+    </div>
+
+    <div id="partnerchecklist">
+      <div class="checklist-item" onclick="toggleCheck(this)">
+        <div class="check-box"><span class="check-icon">✓</span></div>
+        <div class="check-label">Gurte korrekt angelegt und Verschlüsse richtig zu?</div>
+      </div>
+      <div class="checklist-item" onclick="toggleCheck(this)">
+        <div class="check-box"><span class="check-icon">✓</span></div>
+        <div class="check-label">Anseilknoten korrekt geknüpft und an der richtigen Stelle am Gurt eingebunden?</div>
+      </div>
+      <div class="checklist-item" onclick="toggleCheck(this)">
+        <div class="check-box"><span class="check-icon">✓</span></div>
+        <div class="check-label">Seil am Sicherungsgerät korrekt eingelegt und Karabiner verschlossen?</div>
+      </div>
+      <div class="checklist-item" onclick="toggleCheck(this)">
+        <div class="check-box"><span class="check-icon">✓</span></div>
+        <div class="check-label">Knoten am Ende des Seils?</div>
+      </div>
+    </div>
+
+    <div class="partnercheck-status incomplete" id="checkStatus">⬜ Noch nicht alle Punkte geprüft</div>
+    <button class="reset-btn" onclick="resetChecklist()">↻ Zurücksetzen (nächste Kletterpartei)</button>
+    <button class="close-section-btn" onclick="closeStep(this)">▲ Partnercheck schließen</button>
+  </div></div>
+</section>
+
+<div class="section-label">Während des Kletterns</div>
+
+<!-- ── 04 SICHERN & ABLASSEN ── -->
+<section class="step" data-index="3">
+  <div class="step-header" onclick="toggleStep(this)">
+    <div class="step-number secure">04</div>
+    <div class="step-header-text">
+      <div class="step-title">Sichern & Ablassen</div>
+      <div class="step-subtitle">Gewichtsrelation, Bremshand, Ablassen</div>
+    </div>
+    <svg class="step-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="step-body"><div class="step-content">
+
+    <div class="sub-section">
+      <div class="sub-header" onclick="toggleSub(this)">
+        <span class="sub-icon">🛡️</span>
+        <span class="sub-title">Grundregeln Sichern</span>
+        <svg class="sub-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="sub-body"><div class="sub-content">
+        <div class="info-card danger">
+          <div class="info-card-title">⚖️ Gewichtsrelation</div>
+          <p>Maximal das 1,5-Fache des Gewichts der sichernden Person.<br><strong>Beispiel:</strong> Sicherer 60 kg → Kletterer max. 90 kg</p>
+        </div>
+        <ul class="bullet-list">
+          <li>Nur mit Sicherungsgerät sichern, bei dem man die richtige Bedienung gelernt hat</li>
+          <li>Richtige <span class="bold">Standposition</span> wählen (1 × 1 Meter-Regel)</li>
+          <li>Die <span class="bold">Bremshand</span> hält jederzeit das Bremsseil richtig umschlossen</li>
+          <li>Korrekte Position der Bremshand: Dort, wo das Sicherungsgerät blockieren kann</li>
+          <li>Beim Seil einholen „tunnelt" die Bremshand und bleibt immer umschlossen am Bremsseil</li>
+          <li><span class="bold">In Bodennähe:</span> ohne Schlappseil und straffer sichern (wegen der Seildehnung)</li>
+        </ul>
+      </div></div>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-header" onclick="toggleSub(this)">
+        <span class="sub-icon">🔗</span>
+        <span class="sub-title">Sicherungskette</span>
+        <svg class="sub-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="sub-body"><div class="sub-content">
+        <p style="font-size:14px; color:var(--text-secondary); line-height:1.6;">
+          Bei Bedarf hält eine zweite Person hinter dem Sichernden das Bremsseil fest – in der Position, in der das Sicherungsgerät blockieren kann. Das erhöht die Sicherheit, z. B. bei großem Gewichtsunterschied oder unerfahrenen Sichernden.
+        </p>
+      </div></div>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-header" onclick="toggleSub(this)">
+        <span class="sub-icon">⬇️</span>
+        <span class="sub-title">Ablassen</span>
+        <svg class="sub-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="sub-body"><div class="sub-content">
+        <ul class="bullet-list">
+          <li>Bremshand (wie immer) am Bremsseil!</li>
+          <li>Die andere Hand umschließt das Sicherungsgerät plus Seil und entriegelt vorsichtig den Bremsmechanismus</li>
+          <li>Den Partner oder die Partnerin <span class="bold">sanft</span> am Boden absetzen</li>
+        </ul>
+      </div></div>
+    </div>
+
+    <button class="close-section-btn" onclick="closeStep(this)">▲ Sichern & Ablassen schließen</button>
+  </div></div>
+</section>
+
+<!-- ── 05 KLETTERN ── -->
+<section class="step" data-index="4">
+  <div class="step-header" onclick="toggleStep(this)">
+    <div class="step-number climb">05</div>
+    <div class="step-header-text">
+      <div class="step-title">Klettern</div>
+      <div class="step-subtitle">Stopp-Regel, Pendelgefahr, Kommandos</div>
+    </div>
+    <svg class="step-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="step-body"><div class="step-content">
+
+    <div class="info-card danger">
+      <div class="info-card-title">✋ Stopp-Regel</div>
+      <p>Wenn der Kletterer zu schnell für den Sichernden ist: <strong>Sofort stoppen!</strong> Klares Stopp-Signal geben. Auf keinen Fall weiter klettern lassen und zu viel Schlappseil in Kauf nehmen.</p>
+    </div>
+
+    <div class="info-card warning">
+      <div class="info-card-title">↔️ Pendelgefahr</div>
+      <p>Nicht zu weit seitlich versetzt unter der Umlenkung klettern.</p>
+    </div>
+
+    <h3 style="font-size:15px; font-weight:700; margin:20px 0 6px; color:var(--text);">Kommandos (mit Blickkontakt!)</h3>
+    <p style="font-size:14px; color:var(--text-secondary); margin-bottom:10px;">
+      Die <span class="bold">kletternde</span> Person gibt die Kommandos an den Sicherungspartner – nicht umgekehrt!
+    </p>
+    <table class="cmd-table">
+      <tr><td>„Zu"</td><td>Seil straffziehen und festmachen</td></tr>
+      <tr><td>„Ab"</td><td>Langsames und kontrolliertes Ablassen</td></tr>
+    </table>
+
+    <button class="close-section-btn" onclick="closeStep(this)">▲ Klettern schließen</button>
+  </div></div>
+</section>
+
+<div class="section-label">Sonderfälle</div>
+
+<!-- ── 06 KOMPLETTGURT ── -->
+<section class="step" data-index="5" id="step5">
+  <div class="step-header" onclick="toggleStep(this)">
+    <div class="step-number special">06</div>
+    <div class="step-header-text">
+      <div class="step-title">Komplettgurt / Brustgurt + Hüftgurt</div>
+      <div class="step-subtitle">Kinder unter 6, motorisch Unsportliche, stark Übergewichtige</div>
+    </div>
+    <svg class="step-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="step-body"><div class="step-content">
+
+    <div class="info-card">
+      <p>Bei Kindern unter 6 Jahren, motorisch Unsportlichen oder stark Übergewichtigen ist ein <strong>Komplettgurt</strong> oder die Kombination aus <strong>Brustgurt + Hüftgurt</strong> nötig.</p>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-header" onclick="toggleSub(this)">
+        <span class="sub-icon">🔗</span>
+        <span class="sub-title">Kombination Brust- und Hüftgurt & Redundanz</span>
+        <svg class="sub-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="sub-body"><div class="sub-content">
+
+        <h4 style="font-size:14px; font-weight:700; margin:0 0 8px; color:var(--text);">Verbindung herstellen</h4>
+        <ul class="bullet-list">
+          <li>Sichere Verbindung zwischen der Hauptanseilschlaufe des Hüftgurtes und den Anseilschlaufen des Brustgurtes herstellen</li>
+          <li>Je nach Gurtsystem über eine <span class="bold">Karabinerverbindung</span> oder ein Bandmaterial/Achterband (einfache Bandschlinge) mit zwei Sackstichknoten</li>
+        </ul>
+
+        <h4 style="font-size:14px; font-weight:700; margin:16px 0 8px; color:var(--text);">Redundanz beim Einbinden</h4>
+        <ul class="bullet-list">
+          <li>Am Ende des Seiles zwei Achterknoten hintereinander legen</li>
+          <li>Beide Achterschlaufen mit Karabinern am Gurt befestigen</li>
+          <li>Oberer Einhängepunkt: bei Belastung unter Zug</li>
+          <li>Unterer Einhängepunkt (Hauptanseilschlaufe Hüftgurt): ohne Belastung</li>
+        </ul>
+        <div class="img-slot">
+          <img src="img/redundanz-einbinden.png" alt="Redundantes Einbinden mit zwei Achterschlaufen" class="img-auto" style="max-width:100%;border-radius:8px;">
+        </div>
+
+        <div class="info-card danger" style="margin-top:14px;">
+          <div class="info-card-title">⚠️ Wichtig</div>
+          <p>Die Verschlüsse am Brustgurt müssen <strong>zurückgeschlauft</strong> sein! (Open/Close)</p>
+        </div>
+      </div></div>
+    </div>
+
+    <button class="close-section-btn" onclick="closeStep(this)">▲ Komplettgurt schließen</button>
+  </div></div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-logo">
+    <a href="https://www.getcon-ep.de" target="_blank" rel="noopener" style="text-decoration:none;">
+      <span style="font-weight:700;font-size:24px;color:var(--blue);letter-spacing:-0.5px;">Get<span style="color:var(--text);">Con</span></span>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Teambuilding & Teamentwicklung</div>
+    </a>
+  </div>
+  <div class="footer-stack">
+    <a href="https://www.getcon-ep.de" class="footer-btn web" target="_blank" rel="noopener">
+      → www.getcon-ep.de
+    </a>
+    <a href="https://wa.me/4917697318191" class="footer-btn whatsapp" target="_blank" rel="noopener">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      WhatsApp
+    </a>
+    <a href="mailto:info@getcon-ep.de" class="footer-btn email">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg>
+      <div>E-Mail<span class="btn-sub">info@getcon-ep.de</span></div>
+    </a>
+  </div>
+  <div class="footer-meta">Marco Schuster · <a href="tel:+4917697318191">0176 9731 8191</a></div>
+</footer>
+
+<script>
+function toggleTheme(){
+  var h=document.documentElement,d=h.getAttribute('data-theme')==='dark';
+  h.setAttribute('data-theme',d?'light':'dark');
+  document.getElementById('themeBtn').textContent=d?'🌙':'☀️';
+  try{localStorage.setItem('getcon-theme',d?'light':'dark')}catch(e){}
+}
+try{
+  if(localStorage.getItem('getcon-theme')==='dark'){
+    document.documentElement.setAttribute('data-theme','dark');
+    document.addEventListener('DOMContentLoaded',function(){document.getElementById('themeBtn').textContent='☀️'});
+  }
+}catch(e){}
+
+function toggleStep(h){h.closest('.step').classList.toggle('open');updateProgress()}
+function closeStep(b){
+  var s=b.closest('.step');
+  s.classList.remove('open');
+  s.querySelectorAll('.sub-section.open').forEach(function(x){x.classList.remove('open')});
+  updateProgress();
+  setTimeout(function(){s.scrollIntoView({behavior:'smooth',block:'start'})},100);
+}
+function openStep(i){
+  var s=document.querySelectorAll('.step');
+  if(s[i]){s[i].classList.add('open');updateProgress();setTimeout(function(){s[i].scrollIntoView({behavior:'smooth',block:'start'})},100)}
+}
+function toggleSub(h){h.closest('.sub-section').classList.toggle('open')}
+
+function toggleCheck(i){
+  i.classList.toggle('checked');
+  if(i.classList.contains('checked')){i.classList.add('just-checked');setTimeout(function(){i.classList.remove('just-checked')},400)}
+  updateCheckStatus();
+}
+function updateCheckStatus(){
+  var t=document.querySelectorAll('#partnerchecklist .checklist-item').length;
+  var c=document.querySelectorAll('#partnerchecklist .checklist-item.checked').length;
+  var e=document.getElementById('checkStatus');
+  if(c===t){e.className='partnercheck-status complete';e.textContent='✅ Alle 4 Punkte geprüft – los geht\'s!'}
+  else{e.className='partnercheck-status incomplete';e.textContent='⬜ '+c+' von '+t+' Punkten geprüft'}
+}
+function resetChecklist(){
+  document.querySelectorAll('#partnerchecklist .checklist-item').forEach(function(i){i.classList.remove('checked','just-checked')});
+  updateCheckStatus();
+}
+
+function updateProgress(){
+  var steps=document.querySelectorAll('.step'),dots=document.querySelectorAll('.progress-dot'),last=-1;
+  steps.forEach(function(s,i){if(s.classList.contains('open'))last=i});
+  dots.forEach(function(d,i){d.classList.remove('active','done');if(i<last)d.classList.add('done');if(i===last)d.classList.add('active')});
+  document.getElementById('progressLabel').textContent=last>=0?(last+1)+' / '+steps.length:'– / '+steps.length;
+}
+document.querySelectorAll('.progress-dot').forEach(function(d){d.addEventListener('click',function(){openStep(parseInt(d.dataset.step))})});
+updateProgress();updateCheckStatus();
+</script>
+</body>
+</html>
